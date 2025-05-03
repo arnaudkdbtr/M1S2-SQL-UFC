@@ -313,7 +313,7 @@ HAVING total_combats >= 10
 ORDER BY total_combats DESC;
  ```
 
-Consultez le fichier [**queries.sql**](queries.sql) pour explorer toutes ces requêtes et comprendre comment tirer le meilleur parti de notre système de gestion de données UFC.
+Pour découvrir d’autres requêtes de ce type, consultez le fichier [**queries.sql**](queries.sql). Vous y trouverez de nombreuses instructions utiles pour exploiter pleinement les capacités de notre système de gestion de données UFC.
 
 ## 📊 Sources des données
 
