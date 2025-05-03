@@ -350,7 +350,7 @@ Les données utilisées dans ce projet proviennent des sources suivantes :
 
 ### Améliorations futures
 
-- **Gestion native des "catch weight"** : Actuellement, notre système attribue les combats en "catch weight" (combats où les athlètes s'accordent sur un poids intermédiaire entre deux catégories officielles) à la catégorie existante la plus proche. Par exemple, un combat à 160 lbs entre la catégorie des légers (155 lbs) et des welters (170 lbs) serait actuellement classé dans la catégorie welter. Une amélioration future pourrait consister à créer une entité spécifique pour ces combats avec leur poids exact négocié, permettant une traçabilité plus précise de ces accords particuliers.
+- **Gestion native des "catch weight"** : Actuellement, notre système attribue les combats en "catch weight" (combats où les athlètes s'accordent sur un poids intermédiaire entre deux catégories officielles) à la catégorie existante la plus proche. Une amélioration future pourrait consister à créer une entité spécifique pour ces combats avec leur poids exact négocié, permettant une traçabilité plus précise de ces accords particuliers.
 
 - **Historique des champions** : Implémentation d'un système de gestion des ceintures de champion par catégorie, incluant :
   - L'historique des champions par catégorie
