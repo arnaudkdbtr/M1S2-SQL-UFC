@@ -30,7 +30,6 @@ Ce système permet non seulement d'**archiver les informations historiques** des
 - [Diagramme Entité-Relation](#diagramme-entité-relation)
 - [Fonctionnalités principales](#fonctionnalités-principales)
 - [Contenu des fichiers](#contenu-des-fichiers)
-- [Installation et utilisation](#installation-et-utilisation)
 - [Exemples de requêtes](#exemples-de-requêtes)
 - [Sources des données](#sources-des-données)
 - [Optimisations et limitations](#optimisations-et-limitations)
