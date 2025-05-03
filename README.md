@@ -228,7 +228,7 @@ Une fois la base de données configurée, vous pouvez :
 
 ### Visualisation web
 
-Pour une expérience plus conviviale, vous pouvez visualiser et interagir avec la base de données via une interface web :
+Pour une expérience plus conviviale, vous pouvez visualiser et interagir avec la base de données via une interface web:
 
 ```bash
 # Installation
