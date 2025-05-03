@@ -144,13 +144,13 @@ erDiagram
     }
     
     CATEGORIE ||--o{ COMBAT : "catégorise"
-    COMBATTANT ||--o{ COMBAT : "participe (combattant1)"
-    COMBATTANT ||--o{ COMBAT : "participe (combattant2)"
-    COMBATTANT ||--o{ RESULTAT : "vainqueur"
-    EVENEMENT ||--o{ COMBAT : "contient"
-    COMBAT ||--|| RESULTAT : "aboutit à"
-    COMBAT ||--o{ STATISTIQUE_ROUND : "génère stats"
-    COMBATTANT ||--o{ STATISTIQUE_ROUND : "réalise performance"
+    COMBATTANT ||--o{ COMBAT : "combattant1"
+    COMBATTANT ||--o{ COMBAT : "combattant2"
+    COMBATTANT ||--o{ RESULTAT : "gagne"
+    EVENEMENT ||--o{ COMBAT : "organise"
+    COMBAT ||--o| RESULTAT : "a un"
+    COMBAT ||--o{ STATISTIQUE_ROUND : "génère"
+    COMBATTANT ||--o{ STATISTIQUE_ROUND : "performe dans"
 ```
 
 ## ✨ Fonctionnalités principales
