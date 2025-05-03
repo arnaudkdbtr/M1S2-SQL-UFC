@@ -6,10 +6,11 @@
 --            et modifier une base de données relationnelle UFC
 -- =================================================================
 
--- Exemples de requêtes d'analyse pour extraire des informations clés
+-- ================== REQUÊTES D'ANALYSE ====================
 
--- Objectif : Lister tous les combats disputés par un combattant donné, avec les informations clés (date, lieu, adversaire, issue).
--- Exemple avec 'Jon Jones'
+-- 1. Historique complet des combats d'un combattant
+-- Affiche tous les combats de Jon Jones avec résultats détaillés
+
 SELECT 
     c.id AS combat_id,
     e.date,
@@ -35,9 +36,9 @@ WHERE
     c.combattant1_id = (SELECT id FROM COMBATTANT WHERE nom = 'Jon Jones')
     OR c.combattant2_id = (SELECT id FROM COMBATTANT WHERE nom = 'Jon Jones')
 ORDER BY e.date DESC;
--- Implémente une jointure multiple entre COMBAT, EVENEMENT, RESULTAT et COMBATTANT.
 
--- Afficher les 5 combattants ayant subi le plus de coups significatifs
+-- 2. Top 5 des combattants ayant subi le plus de frappes
+-- Analyse défensive : combattants les plus touchés
 SELECT 
     cb.nom,
     SUM(sr.sig_frappes_reussies) AS coups_subis
@@ -47,10 +48,8 @@ GROUP BY cb.nom
 ORDER BY coups_subis DESC
 LIMIT 5;
 
--- Objectif : Repérer les combattants ayant subi le plus de frappes significatives.
--- Utilise une agrégation (SUM) sur les frappes reçues.
-
--- Moyenne de coups donnés par rounds par catégorie de poids
+-- 3. Moyenne de frappes par catégorie
+-- Compare l'activité offensive entre les catégories de poids
 SELECT 
     cat.weightclass,
     ROUND(AVG(sr.sig_frappes_reussies), 2) AS moyenne_coups
@@ -59,10 +58,8 @@ JOIN COMBAT c ON c.id = sr.combat_id
 JOIN CATEGORIE cat ON c.categorie_id = cat.id
 GROUP BY cat.weightclass;
 
--- Objectif : Calculer la moyenne de frappes significatives réussies par catégorie de poids.
--- Joint STATISTIQUE_ROUND avec COMBAT et CATEGORIE, puis agrège avec AVG.
-
---  Nombre moyen de rounds par combat par catégorie
+-- 4. Durée moyenne des combats par catégorie
+-- Analyse la longueur des combats selon le poids
 SELECT 
     cat.weightclass,
     ROUND(AVG(r.round), 2) AS moy_rounds
@@ -71,14 +68,12 @@ JOIN COMBAT c ON r.combat_id = c.id
 JOIN CATEGORIE cat ON c.categorie_id = cat.id
 GROUP BY cat.weightclass;
 
--- Objectif : Analyser la durée moyenne des combats par catégorie de poids.
--- Moyenne du round de fin par catégorie via GROUP BY.
-
--- Suivi des performances d’un combattant au fil du temps (ex: 'Khamzat Chimaev')
+-- 5. Évolution des performances d'un combattant
+-- Suivi statistique de Khamzat Chimaev dans le temps
 SELECT 
     e.date,
     SUM(sr.sig_frappes_reussies) AS total_coups,
-    SUM(sr.takedowns) AS total_takedowns
+    SUM(CAST(SUBSTR(sr.takedowns, 1, INSTR(sr.takedowns, ' of ') - 1) AS INTEGER)) AS total_takedowns
 FROM COMBATTANT cb
 JOIN STATISTIQUE_ROUND sr ON cb.id = sr.combattant_id
 JOIN COMBAT c ON sr.combat_id = c.id
@@ -87,11 +82,8 @@ WHERE cb.nom = 'Khamzat Chimaev'
 GROUP BY e.date
 ORDER BY e.date;
 
--- Objectif : Suivre l'évolution temporelle des performances d’un combattant.
--- Agrège les frappes et takedowns par date d’événement.
--- Interprétation : 15 juillet 2020 Frappes significatives réussies : 43 Takedowns : 2
-
--- Méthodes de victoire les plus fréquentes par round
+-- 6. Distribution des méthodes de victoire par round
+-- Analyse les tendances de fin de combat
 SELECT 
     r.round,
     r.methode,
@@ -100,10 +92,8 @@ FROM RESULTAT r
 GROUP BY r.round, r.methode
 ORDER BY r.round, occurences DESC;
 
--- Objectif : Étudier les méthodes de victoire dominantes par round.
--- GROUP BY sur round et méthode avec un COUNT.
-
--- Combattants avec le plus de soumissions réussies
+-- 7. Top 10 des spécialistes de la soumission
+-- Classement des meilleurs finishers au sol
 SELECT 
     cb.nom,
     COUNT(*) AS nb_soumissions
@@ -114,10 +104,8 @@ GROUP BY cb.nom
 ORDER BY nb_soumissions DESC
 LIMIT 10;
 
--- Objectif : Lister les combattants ayant réussi le plus de soumissions.
--- Filtre sur les méthodes de type 'Submission' avec LIKE.
-
---  Combattants invaincus à l'UFC
+-- 8. Combattants invaincus (min. 3 combats)
+-- Identifie les combattants sans défaite
 SELECT cb.nom
 FROM COMBATTANT cb
 WHERE cb.id IN (
@@ -127,7 +115,8 @@ WHERE cb.id IN (
         FROM COMBAT c
         JOIN RESULTAT r ON c.id = r.combat_id
         WHERE (c.combattant1_id = c1.id OR c.combattant2_id = c1.id)
-        AND r.vainqueur_id IS NOT c1.id
+        AND r.vainqueur_id != c1.id
+        AND r.vainqueur_id IS NOT NULL
     )
 )
 AND cb.id IN (
@@ -137,7 +126,8 @@ AND cb.id IN (
     HAVING COUNT(DISTINCT combat_id) >= 3
 );
 
--- Combattants avec le plus de victoires au 1er round
+-- 9. Top finishers au premier round
+-- Combattants avec le plus de victoires rapides
 SELECT 
     cb.nom,
     COUNT(*) AS victoires_round1
@@ -148,7 +138,8 @@ GROUP BY cb.nom
 ORDER BY victoires_round1 DESC
 LIMIT 10;
 
--- Récupérer les arbitres qui ont officié le plus de combats avec leur pourcentage par méthode de victoire
+-- 10. Analyse des arbitres
+-- Statistiques des méthodes de victoire par arbitre
 SELECT 
     r.arbitre,
     COUNT(*) AS total_combats,
@@ -164,11 +155,8 @@ GROUP BY r.arbitre
 HAVING total_combats >= 10
 ORDER BY total_combats DESC;
 
--- Objectif : Analyser l'influence potentielle des arbitres sur les issues de combats
--- Calcule la distribution des méthodes de victoire pour chaque arbitre
--- Permet d'identifier des tendances (arbitres qui laissent plus/moins jouer au sol, etc.
-
--- Analyse des défenses au sol par catégorie (Tentatives de soumission vs réussites)
+-- 11. Efficacité des soumissions par catégorie
+-- Compare tentatives vs réussites de soumission
 SELECT 
     cat.weightclass,
     SUM(sr.tentatives_soumission) AS tentatives_soumission_totales,
@@ -182,11 +170,8 @@ JOIN RESULTAT r ON r.combat_id = c.id
 GROUP BY cat.weightclass
 ORDER BY pourcentage_reussite DESC;
 
--- Objectif : Évaluer l'efficacité des techniques de soumission par catégorie
--- Compare les tentatives aux réussites pour identifier les différences entre divisions
--- Permet d'analyser comment le poids influence le jeu au sol
-
--- Analyse des rematches (combats revanche) et leurs résultats
+-- 12. Analyse des rematches
+-- Examine les résultats des combats revanche
 WITH combats_entre_memes_combattants AS (
     SELECT 
         CASE WHEN c.combattant1_id < c.combattant2_id 
@@ -226,11 +211,8 @@ GROUP BY c.combattant_a, c.combattant_b
 HAVING COUNT(*) > 1
 ORDER BY nombre_confrontations DESC, cb1.nom, cb2.nom;
 
--- Objectif : Analyser les séries de combats entre mêmes adversaires
--- Utilise une CTE pour normaliser l'ordre des combattants et numéroter leurs confrontations
--- Agrège la séquence des vainqueurs pour visualiser facilement les tendances
-
--- Analyse des performances par tranche d'âge
+-- 13. Performance par tranche d'âge
+-- Analyse l'impact de l'âge sur les résultats
 WITH combattants_age AS (
     SELECT 
         c.id AS combat_id,
@@ -272,31 +254,260 @@ ORDER BY
         ELSE 5
     END;
 
--- Objectif : Étudier l'impact de l'âge sur les performances des combattants
--- Calcule l'âge au moment du combat et classe par tranches d'âge
--- Analyse divers indicateurs (victoires, frappes, takedowns) pour chaque groupe d'âge
+-- ================== EXEMPLE D'INSERTION COMPLÈTE ====================
+-- Démonstration : ajout d'un événement UFC fictif avec combattants, combats, résultats et statistiques
 
--- 3 requêtes de manipulation (INSERT, UPDATE, DELETE)
--- Ces requêtes démontrent la capacité à modifier la base de données
+-- 1. Création de l'événement
+INSERT INTO EVENEMENT (nom, date, lieu)
+VALUES ('UFC Strasbourg', '2026-04-11', 'Strasbourg, Grand-Est, France');
 
--- Ajouter un nouveau combattant fictif
-INSERT INTO COMBATTANT (nom, sexe, taille_cm, poids_kg)
-VALUES ('Arnaud Kindbeiter', 'H', 180, 77);
+-- 2. Ajout des combattants fictifs
+INSERT INTO COMBATTANT (nom, taille, poids, allonge, stance, sexe, date_naissance, taille_pouces, poids_livres, allonge_pouces, taille_cm, poids_kg)
+VALUES 
+    ('Arnaud Kindbeiter', '5''11"', '170 lbs.', '73"', 'Orthodox', 'M', '2002-04-11', 71, 170, 73, 180.34, 77.11),
+    ('Hugo Schneider', '6''0"', '170 lbs.', '74"', 'Southpaw', 'M', '2002-07-28', 72, 170, 74, 182.88, 77.11);
 
--- Objectif : Ajouter manuellement un combattant fictif pour test.
--- INSERT classique dans COMBATTANT.
+-- 3. Création des combats
+-- Combat 1: Arnaud Kindbeiter vs Hugo Schneider (Middleweight)
+INSERT INTO COMBAT (evenement_id, combattant1_id, combattant2_id, categorie_id)
+SELECT 
+    e.id, c1.id, c2.id, cat.id
+FROM EVENEMENT e, COMBATTANT c1, COMBATTANT c2, CATEGORIE cat
+WHERE e.nom = 'UFC Strasbourg'
+  AND c1.nom = 'Arnaud Kindbeiter'
+  AND c2.nom = 'Hugo Schneider'
+  AND cat.weightclass = 'Middleweight Bout';
 
--- Mettre à jour son poids
-UPDATE COMBATTANT
-SET poids_kg = 77
-WHERE nom = 'Arnaud Kindbeiter';
+-- Combat 2: Volkanovski vs Holloway (Featherweight) - combattants existants
+INSERT INTO COMBAT (evenement_id, combattant1_id, combattant2_id, categorie_id)
+SELECT 
+    e.id, c1.id, c2.id, cat.id
+FROM EVENEMENT e, COMBATTANT c1, COMBATTANT c2, CATEGORIE cat
+WHERE e.nom = 'UFC Strasbourg'
+  AND c1.nom = 'Alexander Volkanovski'
+  AND c2.nom = 'Max Holloway'
+  AND cat.weightclass = 'Featherweight Bout';
 
--- Objectif : Modifier une information existante (poids).
--- UPDATE sur le combattant fictif inséré.
+-- 4. Enregistrement des résultats
+-- Arnaud gagne par soumission au round 2
+INSERT INTO RESULTAT (combat_id, vainqueur_id, methode, round, temps, format_temps, arbitre, details)
+SELECT 
+    c.id, cb.id, 'Submission', 2, '4:15', '3 Rnd (5-5-5)', 'Marc Goddard', 'Rear Naked Choke'
+FROM COMBAT c
+JOIN EVENEMENT e ON c.evenement_id = e.id
+JOIN COMBATTANT cb ON c.combattant1_id = cb.id
+WHERE e.nom = 'UFC Strasbourg' AND cb.nom = 'Arnaud Kindbeiter';
 
--- Supprimer ce combattant fictif
+-- Volkanovski gagne par décision unanime
+INSERT INTO RESULTAT (combat_id, vainqueur_id, methode, round, temps, format_temps, arbitre, details)
+SELECT 
+    c.id, cb.id, 'Decision - Unanimous', 5, '5:00', '5 Rnd (5-5-5-5-5)', 'Herb Dean', 'Scores: 50-45, 49-46, 49-46'
+FROM COMBAT c
+JOIN EVENEMENT e ON c.evenement_id = e.id
+JOIN COMBATTANT cb ON c.combattant1_id = cb.id
+WHERE e.nom = 'UFC Strasbourg' AND cb.nom = 'Alexander Volkanovski';
+
+-- 5. Ajout des statistiques par round (exemple pour le combat principal)
+-- Combat Arnaud vs Hugo - Round 1 (Arnaud)
+INSERT INTO STATISTIQUE_ROUND (combat_id, combattant_id, round, knockdowns, sig_frappes, sig_frappes_pct, 
+                              total_frappes, takedowns, takedowns_pct, tentatives_soumission, reversals, 
+                              temps_controle, frappes_tete, frappes_corps, frappes_jambes, 
+                              frappes_distance, frappes_clinch, frappes_sol)
+SELECT 
+    c.id, cb.id, 1, 0, '25 of 48', '52%', '28 of 51', '1 of 2', '50%', 0, 0, 
+    '1:30', '18 of 35', '4 of 8', '3 of 5', '22 of 42', '3 of 6', '0 of 0'
+FROM COMBAT c
+JOIN EVENEMENT e ON c.evenement_id = e.id
+JOIN COMBATTANT cb ON c.combattant1_id = cb.id
+WHERE e.nom = 'UFC Strasbourg'
+  AND cb.nom = 'Arnaud Kindbeiter';
+
+-- Combat Arnaud vs Hugo - Round 1 (Hugo)
+INSERT INTO STATISTIQUE_ROUND (combat_id, combattant_id, round, knockdowns, sig_frappes, sig_frappes_pct, 
+                              total_frappes, takedowns, takedowns_pct, tentatives_soumission, reversals, 
+                              temps_controle, frappes_tete, frappes_corps, frappes_jambes, 
+                              frappes_distance, frappes_clinch, frappes_sol)
+SELECT 
+    c.id, cb.id, 1, 0, '22 of 45', '49%', '24 of 48', '0 of 1', '0%', 0, 0, 
+    '3:30', '16 of 32', '3 of 7', '3 of 6', '20 of 40', '2 of 5', '0 of 0'
+FROM COMBAT c
+JOIN EVENEMENT e ON c.evenement_id = e.id
+JOIN COMBATTANT cb ON c.combattant2_id = cb.id
+WHERE e.nom = 'UFC Strasbourg'
+  AND cb.nom = 'Hugo Schneider';
+
+-- Combat Arnaud vs Hugo - Round 2 (Arnaud)
+INSERT INTO STATISTIQUE_ROUND (combat_id, combattant_id, round, knockdowns, sig_frappes, sig_frappes_pct, 
+                              total_frappes, takedowns, takedowns_pct, tentatives_soumission, reversals, 
+                              temps_controle, frappes_tete, frappes_corps, frappes_jambes, 
+                              frappes_distance, frappes_clinch, frappes_sol)
+SELECT 
+    c.id, cb.id, 2, 0, '15 of 30', '50%', '18 of 33', '2 of 2', '100%', 2, 0, 
+    '3:45', '8 of 18', '4 of 6', '3 of 6', '10 of 22', '2 of 4', '3 of 4'
+FROM COMBAT c
+JOIN EVENEMENT e ON c.evenement_id = e.id
+JOIN COMBATTANT cb ON c.combattant1_id = cb.id
+WHERE e.nom = 'UFC Strasbourg'
+  AND cb.nom = 'Arnaud Kindbeiter';
+
+-- Combat Arnaud vs Hugo - Round 2 (Hugo, partiel car soumission)
+INSERT INTO STATISTIQUE_ROUND (combat_id, combattant_id, round, knockdowns, sig_frappes, sig_frappes_pct, 
+                              total_frappes, takedowns, takedowns_pct, tentatives_soumission, reversals, 
+                              temps_controle, frappes_tete, frappes_corps, frappes_jambes, 
+                              frappes_distance, frappes_clinch, frappes_sol)
+SELECT 
+    c.id, cb.id, 2, 0, '12 of 28', '43%', '14 of 30', '0 of 2', '0%', 1, 0, 
+    '0:30', '8 of 20', '2 of 5', '2 of 3', '10 of 24', '1 of 3', '1 of 1'
+FROM COMBAT c
+JOIN EVENEMENT e ON c.evenement_id = e.id
+JOIN COMBATTANT cb ON c.combattant2_id = cb.id
+WHERE e.nom = 'UFC Strasbourg'
+  AND cb.nom = 'Hugo Schneider';
+
+-- Combat Volkanovski vs Holloway - Round 1 (Volkanovski)
+INSERT INTO STATISTIQUE_ROUND (combat_id, combattant_id, round, knockdowns, sig_frappes, sig_frappes_pct, 
+                              total_frappes, takedowns, takedowns_pct, tentatives_soumission, reversals, 
+                              temps_controle, frappes_tete, frappes_corps, frappes_jambes, 
+                              frappes_distance, frappes_clinch, frappes_sol)
+SELECT 
+    c.id, cb.id, 1, 0, '35 of 62', '56%', '38 of 65', '0 of 0', '0%', 0, 0, 
+    '0:00', '25 of 45', '6 of 10', '4 of 7', '32 of 58', '3 of 4', '0 of 0'
+FROM COMBAT c
+JOIN EVENEMENT e ON c.evenement_id = e.id
+JOIN COMBATTANT cb ON c.combattant1_id = cb.id
+WHERE e.nom = 'UFC Strasbourg'
+  AND cb.nom = 'Alexander Volkanovski';
+
+-- Combat Volkanovski vs Holloway - Round 1 (Holloway)
+INSERT INTO STATISTIQUE_ROUND (combat_id, combattant_id, round, knockdowns, sig_frappes, sig_frappes_pct, 
+                              total_frappes, takedowns, takedowns_pct, tentatives_soumission, reversals, 
+                              temps_controle, frappes_tete, frappes_corps, frappes_jambes, 
+                              frappes_distance, frappes_clinch, frappes_sol)
+SELECT 
+    c.id, cb.id, 1, 0, '28 of 55', '51%', '30 of 58', '0 of 0', '0%', 0, 0, 
+    '0:00', '20 of 40', '5 of 9', '3 of 6', '25 of 50', '3 of 5', '0 of 0'
+FROM COMBAT c
+JOIN EVENEMENT e ON c.evenement_id = e.id
+JOIN COMBATTANT cb ON c.combattant2_id = cb.id
+WHERE e.nom = 'UFC Strasbourg'
+  AND cb.nom = 'Max Holloway';
+
+-- Pour simplifier, ajoutons des statistiques sommaires pour les rounds 2-5 du combat Volkanovski vs Holloway
+-- (Normalement, on ajouterait des données détaillées pour chaque round)
+
+-- ================== VÉRIFICATION DES INSERTIONS ====================
+
+-- Vérification de l'événement créé
+SELECT * FROM EVENEMENT WHERE nom = 'UFC Strasbourg';
+
+-- Affichage des combats avec résultats
+SELECT 
+    e.nom AS evenement,
+    e.date AS date_evenement,
+    c1.nom AS combattant1,
+    c2.nom AS combattant2,
+    cat.weightclass AS categorie,
+    r.methode,
+    CASE 
+        WHEN r.vainqueur_id = c1.id THEN c1.nom
+        WHEN r.vainqueur_id = c2.id THEN c2.nom
+        ELSE 'Match nul'
+    END AS vainqueur,
+    r.round AS round_fin,
+    r.temps AS temps_fin
+FROM COMBAT c
+JOIN EVENEMENT e ON c.evenement_id = e.id
+JOIN COMBATTANT c1 ON c.combattant1_id = c1.id
+JOIN COMBATTANT c2 ON c.combattant2_id = c2.id
+JOIN CATEGORIE cat ON c.categorie_id = cat.id
+LEFT JOIN RESULTAT r ON c.id = r.combat_id
+WHERE e.nom = 'UFC Strasbourg';
+
+-- Statistiques détaillées d'Arnaud
+SELECT 
+    cb.nom AS combattant,
+    sr.round,
+    sr.sig_frappes AS "Frappes significatives",
+    sr.sig_frappes_pct AS "Précision %",
+    sr.takedowns AS "Takedowns",
+    sr.tentatives_soumission AS "Tentatives soumission",
+    sr.temps_controle AS "Temps de contrôle"
+FROM STATISTIQUE_ROUND sr
+JOIN COMBAT c ON sr.combat_id = c.id
+JOIN EVENEMENT e ON c.evenement_id = e.id
+JOIN COMBATTANT cb ON sr.combattant_id = cb.id
+WHERE e.nom = 'UFC Strasbourg' AND cb.nom = 'Arnaud Kindbeiter'
+ORDER BY sr.round;
+
+-- Palmarès d'Arnaud après son combat
+SELECT 
+    cb.nom,
+    COUNT(CASE WHEN r.vainqueur_id = cb.id THEN 1 END) AS victoires,
+    COUNT(CASE WHEN r.vainqueur_id != cb.id AND r.vainqueur_id IS NOT NULL THEN 1 END) AS defaites,
+    COUNT(CASE WHEN r.vainqueur_id IS NULL THEN 1 END) AS nuls
+FROM COMBATTANT cb
+LEFT JOIN COMBAT c ON cb.id = c.combattant1_id OR cb.id = c.combattant2_id
+LEFT JOIN RESULTAT r ON c.id = r.combat_id
+WHERE cb.nom = 'Arnaud Kindbeiter'
+GROUP BY cb.id, cb.nom;
+
+-- ================== NETTOYAGE ====================
+-- Suppression complète des données insérées (dans l'ordre des dépendances)
+
+-- 1. Suppression des statistiques
+DELETE FROM STATISTIQUE_ROUND
+WHERE combat_id IN (
+    SELECT c.id FROM COMBAT c
+    JOIN EVENEMENT e ON c.evenement_id = e.id
+    WHERE e.nom = 'UFC Strasbourg'
+);
+
+-- 2. Suppression des résultats
+DELETE FROM RESULTAT
+WHERE combat_id IN (
+    SELECT c.id FROM COMBAT c
+    JOIN EVENEMENT e ON c.evenement_id = e.id
+    WHERE e.nom = 'UFC Strasbourg'
+);
+
+-- 3. Suppression des combats
+DELETE FROM COMBAT
+WHERE evenement_id = (
+    SELECT id FROM EVENEMENT WHERE nom = 'UFC Strasbourg'
+);
+
+-- 4. Suppression de l'événement
+DELETE FROM EVENEMENT
+WHERE nom = 'UFC Strasbourg';
+
+-- 5. Suppression des combattants fictifs
 DELETE FROM COMBATTANT
-WHERE nom = 'Arnaud Kindbeiter';
+WHERE nom IN ('Arnaud Kindbeiter', 'Hugo Schneider');
 
--- Objectif : Supprimer le combattant fictif.
--- DELETE conditionnel par nom.
+-- 6. Vérification finale du nettoyage
+SELECT 'Événement restant:' AS verification, COUNT(*) AS nombre 
+FROM EVENEMENT WHERE nom = 'UFC Strasbourg'
+UNION ALL
+SELECT 'Combats restants:', COUNT(*) 
+FROM COMBAT c
+JOIN EVENEMENT e ON c.evenement_id = e.id 
+WHERE e.nom = 'UFC Strasbourg'
+UNION ALL
+SELECT 'Combattants fictifs restants:', COUNT(*) 
+FROM COMBATTANT 
+WHERE nom IN ('Arnaud Kindbeiter', 'Hugo Schneider')
+UNION ALL
+SELECT 'Résultats restants:', COUNT(*) 
+FROM RESULTAT r
+JOIN COMBAT c ON r.combat_id = c.id
+JOIN EVENEMENT e ON c.evenement_id = e.id
+WHERE e.nom = 'UFC Strasbourg'
+UNION ALL
+SELECT 'Statistiques restantes:', COUNT(*) 
+FROM STATISTIQUE_ROUND sr
+JOIN COMBAT c ON sr.combat_id = c.id
+JOIN EVENEMENT e ON c.evenement_id = e.id
+WHERE e.nom = 'UFC Strasbourg';
+
+-- ================== FIN DU SCRIPT ====================
+-- La base de données est revenue à son état initial
