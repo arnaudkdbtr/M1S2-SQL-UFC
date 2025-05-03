@@ -187,17 +187,6 @@ Ce projet est composé des fichiers suivants :
 
 Notre base de données permet d'effectuer des analyses avancées sur les combats, combattants et statistiques de l'UFC. Vous trouverez dans le fichier [**queries.sql**](queries.sql) un ensemble complet de requêtes démontrant les capacités analytiques du système.
 
-EXEMPLE REQUETE
-
-## 📝 Exemples de requêtes
-
-Notre base de données permet d'effectuer des analyses avancées sur les combats, combattants et statistiques de l'UFC. Vous trouverez dans le fichier [**queries.sql**](queries.sql) un ensemble complet de requêtes démontrant les capacités analytiques du système.
-
-
-## 📝 Exemples de requêtes
-
-Notre base de données permet d'effectuer des analyses avancées sur les combats, combattants et statistiques de l'UFC. Vous trouverez dans le fichier [**queries.sql**](queries.sql) un ensemble complet de requêtes démontrant les capacités analytiques du système.
-
 **EXEMPLE DE 2/3 REQUETE CODE + RESULTAT**
 
 ### 4. Exemple d'insertion complète : UFC Strasbourg
