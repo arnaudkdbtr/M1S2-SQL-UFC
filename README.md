@@ -191,15 +191,19 @@ Pour mettre en place et utiliser cette base de données UFC, suivez les étapes 
 ### Configuration initiale
 
 1. **Création du schéma** : Commencez par exécuter le script de création du schéma qui définit la structure de la base de données
+
    ```bash
    sqlite3 ufc.db < schema.sql
    ```
+   
    Ce script crée toutes les tables nécessaires, les vues analytiques, les index pour l'optimisation des performances ainsi que les triggers pour assurer l'intégrité des données.
 
 2. **Importation des données** : Une fois le schéma créé, importez les données depuis les fichiers CSV
+
    ```bash
    sqlite3 ufc.db < import.sql
    ```
+   
    Cette étape remplit les tables avec toutes les informations sur les combattants, événements, combats, résultats et statistiques.
 
 ### Utilisation de la base de données
@@ -207,35 +211,38 @@ Pour mettre en place et utiliser cette base de données UFC, suivez les étapes 
 Une fois la base de données configurée, vous pouvez :
 
 - **Explorer la structure** :
+
   ```bash
   sqlite3 ufc.db
   .tables     # Affiche toutes les tables et vues
   .schema     # Affiche le schéma complet
   ```
-  
+
 - **Effectuer des analyses personnalisées** en vous connectant à la base :
-  
+
   ```bash
   sqlite3 ufc.db
   ```
+  
   Vous pouvez ensuite exécuter vos propres requêtes SQL pour analyser les données selon vos besoins.
 
 ### Visualisation web
 
-  Pour une expérience plus conviviale, vous pouvez visualiser et interagir avec la base de données via une interface web :
-  
-  ```bash
-  # Installation
-  pip install sqlite-web
+Pour une expérience plus conviviale, vous pouvez visualiser et interagir avec la base de données via une interface web :
 
-  # Lancement
-  sqlite_web ufc.db
-  ```
-  Cette commande lance une interface web accessible via votre navigateur vous permettant de :
-    - Naviguer facilement dans les tables et vues
-    - Exécuter des requêtes SQL de manière interactive
-    - Visualiser les données dans un format tabulaire
-    - Explorer la structure de la base de données
+```bash
+# Installation
+pip install sqlite-web
+
+# Lancement
+sqlite_web ufc.db
+```
+
+Cette commande lance une interface web accessible via votre navigateur vous permettant de :
+- Naviguer facilement dans les tables et vues
+- Exécuter des requêtes SQL de manière interactive
+- Visualiser les données dans un format tabulaire
+- Explorer la structure de la base de données
   
 ## 📝 Exemples de requêtes
 
