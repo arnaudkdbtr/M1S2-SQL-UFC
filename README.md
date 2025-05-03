@@ -219,23 +219,23 @@ Une fois la base de données configurée, vous pouvez :
   sqlite3 ufc.db
   ```
   Vous pouvez ensuite exécuter vos propres requêtes SQL pour analyser les données selon vos besoins.
-  
-  ### Visualisation web
 
-  Pour une expérience plus conviviale, vous pouvez visualiser et interagir avec la base de données via une interface web :
-  
-  ```bash
-  # Installation
-  pip install sqlite-web
+### Visualisation web
 
-  # Lancement
-  sqlite_web ufc.db
-  ```
-  Cette commande lance une interface web accessible via votre navigateur vous permettant de :
-  - Naviguer facilement dans les tables et vues
-  - Exécuter des requêtes SQL de manière interactive
-  - Visualiser les données dans un format tabulaire
-  - Explorer la structure de la base de données
+Pour une expérience plus conviviale, vous pouvez visualiser et interagir avec la base de données via une interface web :
+  
+```bash
+# Installation
+pip install sqlite-web
+
+# Lancement
+sqlite_web ufc.db
+```
+Cette commande lance une interface web accessible via votre navigateur vous permettant de :
+ - Naviguer facilement dans les tables et vues
+ - Exécuter des requêtes SQL de manière interactive
+ - Visualiser les données dans un format tabulaire
+ - Explorer la structure de la base de données
   
 ## 📝 Exemples de requêtes
 
