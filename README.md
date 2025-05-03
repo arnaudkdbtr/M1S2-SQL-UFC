@@ -170,7 +170,7 @@ Ce projet est composé des fichiers suivants :
 
 - [**schema.sql**](schema.sql) : Script de création du schéma de la base de données
 - [**import.sql**](import.sql) : Script d'importation des données depuis les fichiers CSV
-- **queries.sql** : Exemples de requêtes démontrant les capacités de la base de données
+- [**queries.sql**](import.sql) : Exemples de requêtes démontrant les capacités de la base de données
 - **README.md** : Ce document de conception et documentation
 
 ### Fichiers de données (format CSV) :
@@ -186,7 +186,96 @@ Ce projet est composé des fichiers suivants :
 
 Notre base de données permet d'effectuer des analyses avancées sur les combats, combattants et statistiques de l'UFC. Vous trouverez dans le fichier [**queries.sql**](queries.sql) un ensemble complet de requêtes démontrant les capacités analytiques du système.
 
-**EXEMPLE DE 2/3 REQUETE CODE + RESULTAT**
+Dont voici quelques exemples :
+
+### Afficher les 5 combattants ayant subi le plus de coups significatifs
+ 
+ ```sql
+SELECT 
+    cb.nom,
+    SUM(sr.sig_frappes_reussies) AS coups_subis
+FROM STATISTIQUE_ROUND sr
+JOIN COMBATTANT cb ON cb.id = sr.combattant_id
+GROUP BY cb.nom
+ORDER BY coups_subis DESC
+LIMIT 5;
+ ```
+
+### Combattants avec le plus de soumissions réussies
+ 
+ ```sql
+SELECT 
+    cb.nom,
+    COUNT(*) AS nb_soumissions
+FROM RESULTAT r
+JOIN COMBATTANT cb ON r.vainqueur_id = cb.id
+WHERE methode LIKE '%Submission%'
+GROUP BY cb.nom
+ORDER BY nb_soumissions DESC
+LIMIT 10;
+ ```
+
+### Analyse des rematches (combats revanche) et leurs résultats
+ 
+ ```sql
+WITH combats_entre_memes_combattants AS (
+    SELECT 
+        CASE WHEN c.combattant1_id < c.combattant2_id 
+             THEN c.combattant1_id ELSE c.combattant2_id END AS combattant_a,
+        CASE WHEN c.combattant1_id < c.combattant2_id 
+             THEN c.combattant2_id ELSE c.combattant1_id END AS combattant_b,
+        c.id AS combat_id,
+        e.date,
+        r.vainqueur_id,
+        ROW_NUMBER() OVER (
+            PARTITION BY 
+                CASE WHEN c.combattant1_id < c.combattant2_id THEN c.combattant1_id ELSE c.combattant2_id END,
+                CASE WHEN c.combattant1_id < c.combattant2_id THEN c.combattant2_id ELSE c.combattant1_id END
+            ORDER BY e.date
+        ) AS numero_combat
+    FROM COMBAT c
+    JOIN EVENEMENT e ON c.evenement_id = e.id
+    JOIN RESULTAT r ON r.combat_id = c.id
+    WHERE r.vainqueur_id IS NOT NULL
+)
+SELECT 
+    cb1.nom AS combattant_a,
+    cb2.nom AS combattant_b,
+    COUNT(*) AS nombre_confrontations,
+    STRING_AGG(
+        CASE 
+            WHEN c.vainqueur_id = c.combattant_a THEN cb1.nom
+            ELSE cb2.nom
+        END, 
+        ', ' 
+        ORDER BY c.numero_combat
+    ) AS sequence_vainqueurs
+FROM combats_entre_memes_combattants c
+JOIN COMBATTANT cb1 ON c.combattant_a = cb1.id
+JOIN COMBATTANT cb2 ON c.combattant_b = cb2.id
+GROUP BY c.combattant_a, c.combattant_b
+HAVING COUNT(*) > 1
+ORDER BY nombre_confrontations DESC, cb1.nom, cb2.nom;
+ ```
+
+### Calcule la distribution des méthodes de victoire pour chaque arbitre
+ 
+ ```sql
+SELECT 
+    r.arbitre,
+    COUNT(*) AS total_combats,
+    COUNT(CASE WHEN r.methode LIKE '%Decision%' THEN 1 END) AS decisions,
+    COUNT(CASE WHEN r.methode LIKE '%KO%' OR r.methode LIKE '%TKO%' THEN 1 END) AS ko_tko,
+    COUNT(CASE WHEN r.methode LIKE '%Submission%' THEN 1 END) AS soumissions,
+    ROUND(100.0 * COUNT(CASE WHEN r.methode LIKE '%Decision%' THEN 1 END) / COUNT(*), 2) AS pct_decisions,
+    ROUND(100.0 * COUNT(CASE WHEN r.methode LIKE '%KO%' OR r.methode LIKE '%TKO%' THEN 1 END) / COUNT(*), 2) AS pct_ko_tko,
+    ROUND(100.0 * COUNT(CASE WHEN r.methode LIKE '%Submission%' THEN 1 END) / COUNT(*), 2) AS pct_soumissions
+FROM RESULTAT r
+WHERE r.arbitre IS NOT NULL AND r.arbitre != ''
+GROUP BY r.arbitre
+HAVING total_combats >= 10
+ORDER BY total_combats DESC;
+ ```
 
 ### Exemple d'insertion complète : UFC Strasbourg
 Pour illustrer comment ajouter de nouvelles données, nous avons créé un exemple fictif d'événement UFC à Strasbourg comprenant :
