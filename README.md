@@ -410,4 +410,4 @@ Ces améliorations permettraient d'avoir un système encore plus complet et fid�
 Ce projet a été développé par :
 
 - **Arnaud KINDBEITER** - [GitHub @arnaudkdbtr](https://github.com/arnaudkdbtr)
-- **Hugo Schneider** - [GitHub @HugoSchneider](https://github.com/HugoSchneider)
+- **Hugo SCHNEIDER** - [GitHub @HugoSchneider](https://github.com/HugoSchneider)
