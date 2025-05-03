@@ -166,7 +166,7 @@ SELECT
     e.date AS date_evenement,
     c1.nom AS combattant1,
     c2.nom AS combattant2,
-    cat.nom AS categorie,
+    cat.weightclass AS categorie,
     CASE 
         WHEN r.vainqueur_id = c1.id THEN c1.nom
         WHEN r.vainqueur_id = c2.id THEN c2.nom
