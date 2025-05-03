@@ -189,7 +189,7 @@ Notre base de données permet d'effectuer des analyses avancées sur les combats
 
 **EXEMPLE DE 2/3 REQUETE CODE + RESULTAT**
 
-### 4. Exemple d'insertion complète : UFC Strasbourg
+### Exemple d'insertion complète : UFC Strasbourg
 Pour illustrer comment ajouter de nouvelles données, nous avons créé un exemple fictif d'événement UFC à Strasbourg comprenant :
 
 - **L'événement** : "UFC Strasbourg" programmé le XX décembre 20XX
