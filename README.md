@@ -362,6 +362,7 @@ Les données utilisées dans ce projet proviennent des sources suivantes :
   - Main card (carte principale)
   - Preliminary card (preliminaries)
   - Early preliminaries
+  
   Cette structure permettrait des analyses plus précises sur la progression des combattants dans la hiérarchie UFC
 
 - **Gestion des surnoms et alias** : Ajout d'une table pour gérer les multiples identités des combattants :
