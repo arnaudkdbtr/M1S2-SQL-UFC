@@ -213,11 +213,29 @@ Une fois la base de données configurée, vous pouvez :
   ```
   
 - **Effectuer des analyses personnalisées** en vous connectant à la base :
+  
   ```bash
   sqlite3 ufc.db
   ```
   Vous pouvez ensuite exécuter vos propres requêtes SQL pour analyser les données selon vos besoins.
+  
+  ### Visualisation web
 
+  Pour une expérience plus conviviale, vous pouvez visualiser et interagir avec la base de données via une interface web :
+  
+  ```bash
+  # Installation
+  pip install sqlite-web
+
+  # Lancement
+  sqlite_web ufc.db
+  ```
+  Cette commande lance une interface web accessible via votre navigateur vous permettant de :
+  - Naviguer facilement dans les tables et vues
+  - Exécuter des requêtes SQL de manière interactive
+  - Visualiser les données dans un format tabulaire
+  - Explorer la structure de la base de données
+  
 ## 📝 Exemples de requêtes
 
 Notre base de données permet d'effectuer des analyses avancées sur les combats, combattants et statistiques de l'UFC. Vous trouverez dans le fichier [**queries.sql**](queries.sql) un ensemble complet de requêtes démontrant les capacités analytiques du système.
