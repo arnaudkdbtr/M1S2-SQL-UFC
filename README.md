@@ -222,11 +222,10 @@ Une fois la base de données configurée, vous pouvez :
 
 Notre base de données permet d'effectuer des analyses avancées sur les combats, combattants et statistiques de l'UFC. Vous trouverez dans le fichier [**queries.sql**](queries.sql) un ensemble complet de requêtes démontrant les capacités analytiques du système.
 
-Dont voici quelques exemples :
+Voici quelques exemples représentatifs :
 
-### Afficher les 5 combattants ayant subi le plus de coups significatifs
- 
- ```sql
+### 🥊 Top 5 des combattants ayant subi le plus de frappes
+```sql
 SELECT 
     cb.nom,
     SUM(sr.sig_frappes_reussies) AS coups_subis
@@ -235,11 +234,10 @@ JOIN COMBATTANT cb ON cb.id = sr.combattant_id
 GROUP BY cb.nom
 ORDER BY coups_subis DESC
 LIMIT 5;
- ```
+```
 
-### Combattants avec le plus de soumissions réussies
- 
- ```sql
+### 🤼‍♂️ Spécialistes de la soumission
+```sql
 SELECT 
     cb.nom,
     COUNT(*) AS nb_soumissions
@@ -249,11 +247,10 @@ WHERE methode LIKE '%Submission%'
 GROUP BY cb.nom
 ORDER BY nb_soumissions DESC
 LIMIT 10;
- ```
+```
 
-### Analyse des rematches (combats revanche) et leurs résultats
- 
- ```sql
+### 🔄 Analyse des rematches
+```sql
 WITH combats_entre_memes_combattants AS (
     SELECT 
         CASE WHEN c.combattant1_id < c.combattant2_id 
@@ -292,11 +289,10 @@ JOIN COMBATTANT cb2 ON c.combattant_b = cb2.id
 GROUP BY c.combattant_a, c.combattant_b
 HAVING COUNT(*) > 1
 ORDER BY nombre_confrontations DESC, cb1.nom, cb2.nom;
- ```
+```
 
-### Calcule la distribution des méthodes de victoire pour chaque arbitre
- 
- ```sql
+### 👨‍⚖️ Statistiques des arbitres
+```sql
 SELECT 
     r.arbitre,
     COUNT(*) AS total_combats,
@@ -311,9 +307,21 @@ WHERE r.arbitre IS NOT NULL AND r.arbitre != ''
 GROUP BY r.arbitre
 HAVING total_combats >= 10
 ORDER BY total_combats DESC;
- ```
+```
 
-Pour découvrir d’autres requêtes de ce type, consultez le fichier [**queries.sql**](queries.sql). Vous y trouverez de nombreuses instructions utiles pour exploiter pleinement les capacités de notre système de gestion de données UFC.
+### 📥 Exemple d'insertion complète
+
+Le fichier inclut également un exemple pratique d'ajout d'un événement complet dans la base de données :
+
+- **UFC Strasbourg** (11 avril 2026)
+- **Deux combats** avec combattants fictifs français (Arnaud Kindbeiter, Hugo Schneider) et réels (Volkanovski vs Holloway)
+- **Résultats** : Soumission au round 2 et décision unanime
+- **Statistiques détaillées** : Frappes significatives, takedowns, temps de contrôle par round
+- **Nettoyage automatique** : Suppression complète des données après démonstration
+
+Cet exemple illustre l'insertion de données interconnectées en respectant les contraintes d'intégrité référentielle.
+
+Pour découvrir d'autres exemples et exploiter pleinement les capacités de notre système, consultez le fichier [**queries.sql**](queries.sql).
 
 ## 📊 Sources des données
 
