@@ -172,7 +172,8 @@ Ce projet est composé des fichiers suivants :
 - [**schema.sql**](schema.sql) : Script de création du schéma de la base de données
 - [**import.sql**](import.sql) : Script d'importation des données depuis les fichiers CSV
 - [**queries.sql**](import.sql) : Exemples de requêtes démontrant les capacités de la base de données
-- [**README.md**](README.md) : Ce document de conception et documentation
+- [**ufc.db**](ufc.db) : Base de données SQLite complète avec le schéma et les données déjà importées
+- [**README.md**](README.md) : Ce document de conception et de documentation
 
 ### Fichiers de données (format CSV) :
 
