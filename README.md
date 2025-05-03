@@ -277,21 +277,6 @@ HAVING total_combats >= 10
 ORDER BY total_combats DESC;
  ```
 
-### Exemple d'insertion complète : UFC Strasbourg
-Pour illustrer comment ajouter de nouvelles données, nous avons créé un exemple fictif d'événement UFC à Strasbourg comprenant :
-
-- **L'événement** : "UFC Strasbourg" programmé le XX décembre 20XX
-- **Les combattants** : Mélange de combattants locaux français (XX, XX, XX) et internationaux (XX, XX)
-- **Trois combats** :
-  - XX vs XX (Middleweight)
-  - XX vs XX (Women's Flyweight)  
-  - XX vs XX (Welterweight)
-- **Les résultats détaillés** :
-  - XX gagne par KO/TKO au round X
-  - XX gagne par décision unanime
-  - XX gagne par soumission au round X
-- **Les statistiques par round** : Données détaillées incluant les frappes significatives, takedowns, knockdowns, et temps de contrôle pour chaque combattant à chaque round
-
 Consultez le fichier [**queries.sql**](queries.sql) pour explorer toutes ces requêtes et comprendre comment tirer le meilleur parti de notre système de gestion de données UFC.
 
 ## 📊 Sources des données
