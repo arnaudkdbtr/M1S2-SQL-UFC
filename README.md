@@ -348,6 +348,36 @@ Les données utilisées dans ce projet proviennent des sources suivantes :
 - **Données manquantes** : Certains combattants peuvent avoir des informations incomplètes (date de naissance, stance, etc.)
 - **Correspondance des noms** : Des ajustements manuels ont été nécessaires pour faire correspondre les noms de combattants entre différentes sources de données
 
+### Améliorations futures
+
+- **Gestion native des "catch weight"** : Actuellement, notre système attribue les combats en "catch weight" (combats où les athlètes s'accordent sur un poids intermédiaire entre deux catégories officielles) à la catégorie existante la plus proche. Par exemple, un combat à 160 lbs entre la catégorie des légers (155 lbs) et des welters (170 lbs) serait actuellement classé dans la catégorie welter. Une amélioration future pourrait consister à créer une entité spécifique pour ces combats avec leur poids exact négocié, permettant une traçabilité plus précise de ces accords particuliers.
+
+- **Historique des champions** : Implémentation d'un système de gestion des ceintures de champion par catégorie, incluant :
+  - L'historique des champions par catégorie
+  - Les défenses de titre
+  - Les ceintures intérimaires
+  - Les combats pour le titre
+  
+- **Hiérarchie des cartes d'événements** : Distinction entre les différentes parties d'un événement :
+  - Main card (carte principale)
+  - Preliminary card (preliminaries)
+  - Early preliminaries
+  Cette structure permettrait des analyses plus précises sur la progression des combattants dans la hiérarchie UFC
+
+- **Gestion des surnoms et alias** : Ajout d'une table pour gérer les multiples identités des combattants :
+  - Surnoms officiels (ex: "The Notorious" pour Conor McGregor)
+  - Alias et variations orthographiques des noms
+  - Noms d'avant/après mariages ou changements légaux
+  
+- **Autres améliorations potentielles** :
+  - Gestion des blessures et annulations
+  - Suivi des suspensions médicales post-combat
+  - Intégration des bonus de performance (Fight of the Night, Performance of the Night)
+  - Système de ranking officiel UFC
+  - Gestion des contrats et statuts des combattants (actif, retraité, suspendu)
+
+Ces améliorations permettraient d'avoir un système encore plus complet et fidèle à la complexité organisationnelle de l'UFC.
+
 ## 👨‍💻 Auteurs
 
 Ce projet a été développé par :
