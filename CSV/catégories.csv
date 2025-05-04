@@ -1,0 +1,15 @@
+id,weightclass,limite_poids_inf,limite_poids_sup
+1,Flyweight Bout,52,57
+2,Bantamweight Bout,57,61
+3,Featherweight Bout,61,66
+4,Lightweight Bout,66,70
+5,Welterweight Bout,70,77
+6,Middleweight Bout,77,84
+7,Light Heavyweight Bout,84,93
+8,Heavyweight Bout,93,120
+9,Women's Atomweight Bout,44,48
+10,Women's Strawweight Bout,48,52
+11,Women's Flyweight Bout,52,57
+12,Women's Bantamweight Bout,57,61
+13,Women's Featherweight Bout,61,66
+14,Women's Lightweight Bout,66,70
