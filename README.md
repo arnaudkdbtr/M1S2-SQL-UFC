@@ -10,6 +10,8 @@
 ## 📚 Contexte académique
 > Ce projet a été réalisé dans le cadre de l'UE6 - Infrastructure de données (partie SQL) du Master 1 Analyse et Politique Economique, Parcours **Data science pour l'économie et l'entreprise du futur** (DS2E).
 
+> Pour les consignes complètes du projet, veuillez consulter [les instructions de l'enseignant](https://github.com/KnuxV/projet_sql/blob/main/projet.md).
+
 ## 💡 Présentation du projet
 Dans ce projet, nous avons construit un **système complet de gestion de données** autour de l'univers de l'UFC (Ultimate Fighting Championship), combinant à la fois :
 - Les aspects sportifs (résultats, statistiques)
